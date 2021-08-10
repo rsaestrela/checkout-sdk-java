@@ -1,46 +1,41 @@
 package com.checkout.instruments;
 
 import com.checkout.ApiClient;
-import com.checkout.ApiCredentials;
 import com.checkout.CheckoutConfiguration;
 import com.checkout.SecretKeyCredentials;
+import com.checkout.AbstractClient;
 
 import java.util.concurrent.CompletableFuture;
 
-public class InstrumentsClientImpl implements InstrumentsClient {
+public class InstrumentsClientImpl extends AbstractClient implements InstrumentsClient {
 
-    private final ApiClient apiClient;
-    private final ApiCredentials credentials;
+    private static final String INSTRUMENTS = "instruments";
 
-    public InstrumentsClientImpl(ApiClient apiClient, CheckoutConfiguration configuration) {
-        if (apiClient == null) {
-            throw new IllegalArgumentException("apiClient must not be null");
-        }
-        if (configuration == null) {
-            throw new IllegalArgumentException("configuration must not be null");
-        }
+    public InstrumentsClientImpl(final ApiClient apiClient, final CheckoutConfiguration configuration) {
+        super(apiClient, SecretKeyCredentials.fromConfiguration(configuration));
+    }
 
-        this.apiClient = apiClient;
-        credentials = new SecretKeyCredentials(configuration);
+    private String getPath(final String instrumentId) {
+        return INSTRUMENTS + "/" + instrumentId;
     }
 
     @Override
-    public CompletableFuture<CreateInstrumentResponse> createInstrument(CreateInstrumentRequest createInstrumentRequest) {
-        return apiClient.postAsync("instruments", credentials, CreateInstrumentResponse.class, createInstrumentRequest, null);
+    public CompletableFuture<CreateInstrumentResponse> createInstrument(final CreateInstrumentRequest createInstrumentRequest) {
+        return apiClient.postAsync(INSTRUMENTS, apiCredentials, CreateInstrumentResponse.class, createInstrumentRequest, null);
     }
 
     @Override
-    public CompletableFuture<InstrumentDetailsResponse> getInstrument(String instrumentId) {
-        return apiClient.getAsync("instruments/" + instrumentId, credentials, InstrumentDetailsResponse.class);
+    public CompletableFuture<InstrumentDetailsResponse> getInstrument(final String instrumentId) {
+        return apiClient.getAsync(getPath(instrumentId), apiCredentials, InstrumentDetailsResponse.class);
     }
 
     @Override
-    public CompletableFuture<UpdateInstrumentResponse> updateInstrument(String instrumentId, UpdateInstrumentRequest updateInstrumentRequest) {
-        return apiClient.patchAsync("instruments/" + instrumentId, credentials, UpdateInstrumentResponse.class, updateInstrumentRequest, null);
+    public CompletableFuture<UpdateInstrumentResponse> updateInstrument(final String instrumentId, final UpdateInstrumentRequest updateInstrumentRequest) {
+        return apiClient.patchAsync(getPath(instrumentId), apiCredentials, UpdateInstrumentResponse.class, updateInstrumentRequest, null);
     }
 
     @Override
-    public CompletableFuture<Void> deleteInstrument(String instrumentId) {
-        return apiClient.deleteAsync("instruments/" + instrumentId, credentials);
+    public CompletableFuture<Void> deleteInstrument(final String instrumentId) {
+        return apiClient.deleteAsync(getPath(instrumentId), apiCredentials);
     }
 }
