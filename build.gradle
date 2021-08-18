@@ -27,7 +27,6 @@ dependencies {
     implementation 'org.apache.httpcomponents:httpmime:4.5.13'
 
     testCompile 'junit:junit:4.12'
-    testCompile 'com.github.tomakehurst:wiremock-jre8:2.26.3'
     testCompile 'org.slf4j:slf4j-simple:1.7.26'
     testCompile 'org.mockito:mockito-inline:3.11.2'
 }
